@@ -1,0 +1,53 @@
+.required {
+  color: red;
+}
+
+/* .css-12detwd-MuiTypography-root {
+        font-size: 20px !important;
+        font-weight: 800 !important;
+        color: black !important;
+    } */
+
+.css-xgfkn2 {
+  height: 0px !important;
+}
+
+.close:hover {
+  cursor: pointer;
+}
+
+.poll_result {
+  /* border: 1px solid red; */
+  border-radius: 10px;
+  margin-bottom: 10px;
+  padding: 10px;
+  box-shadow: 0.2px 0px 1px 1px rgb(218, 219, 228);
+}
+
+.poll_result_heading {
+  display: flex;
+  justify-content: space-between;
+}
+
+.poll_option,
+.poll_result {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.poll_votes {
+  color: #9b9494;
+  font-size: 12px;
+}
+.set-select{
+  color: black !important;
+}
+.MuiSelect-select MuiSelect-outlined MuiSelect-multiple MuiInputBase-input {
+  color: black !important;
+}
+/* .poll_menu {
+  margin-left: 100px;
+}
+.poll_menu:hover {
+  cursor: pointer;
+} */

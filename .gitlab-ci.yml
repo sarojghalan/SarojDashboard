@@ -1,0 +1,15 @@
+image: node:alpine
+cache:
+    paths:
+        - node_modules/
+
+deploy_production:
+    stage: deploy
+    environment: Production
+    only:
+        - main
+    script:
+        - npm install --legacy-peer-deps
+        - npm i -g firebase-tools
+        - CI= npm run build
+        - firebase deploy --non-interactive --token "$FIREBASE_TOKEN"
