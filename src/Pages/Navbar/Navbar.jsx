@@ -17,52 +17,52 @@ import { NavbarForm } from "./NavbarForm";
 import { NavbarTable } from "./NavbarTable";
 
 export const Navbar = () => {
-    const [reload, setReload] = useState(false);
+  const [reload, setReload] = useState(false);
 
-    const { columns, rows } = NavbarTable({ reload, setReload }); 
-    const [openForm, setOpenForm] = useState(false);
+  const { columns, rows } = NavbarTable({ reload, setReload });
+  const [openForm, setOpenForm] = useState(false);
 
-    return (
-        <DashboardLayout>
-        <DashboardNavbar />
-        <SoftBox py={3}>
-          <SoftBox mb={3}>
-            <Card>
-              <SoftBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
-                <SoftTypography variant="h6">Navbar Title</SoftTypography>
-                <SoftButton color="success" onClick={() => setOpenForm(true)}>
-                  New
-                  <Icon>add</Icon>
-                </SoftButton>
-              </SoftBox>
-              <SoftBox
-                sx={{
-                  "& .MuiTableRow-root:not(:last-child)": {
-                    "& td": {
-                      borderBottom: ({ borders: { borderWidth, borderColor } }) =>
-                        `${borderWidth[1]} solid ${borderColor}`,
-                    },
+  return (
+    <DashboardLayout>
+      <DashboardNavbar />
+      <SoftBox py={3}>
+        <SoftBox mb={3}>
+          <Card>
+            <SoftBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
+              <SoftTypography variant="h6">Navbar Title List</SoftTypography>
+              <SoftButton color="success" onClick={() => setOpenForm(true)}>
+                New
+                <Icon>add</Icon>
+              </SoftButton>
+            </SoftBox>
+            <SoftBox
+              sx={{
+                "& .MuiTableRow-root:not(:last-child)": {
+                  "& td": {
+                    borderBottom: ({ borders: { borderWidth, borderColor } }) =>
+                      `${borderWidth[1]} solid ${borderColor}`,
                   },
-                }}
-              >
-                <Table columns={columns} rows={rows} />
-              </SoftBox>
-            </Card>
-          </SoftBox>
+                },
+              }}
+            >
+              <Table columns={columns} rows={rows} />
+            </SoftBox>
+          </Card>
         </SoftBox>
-  
-        {/* New Class Modal */}
-        <MyModal open={openForm} setOpen={setOpenForm} height="100vh">
-          <SoftTypography
-            color="success"
-            fontWeight="bolder"
-            textTransform="uppercase"
-            textAlign="center"
-          >
-            Create Navbar Title
-          </SoftTypography>
-          <NavbarForm setOpen={setOpenForm} reload={reload} setReload={setReload} />
-        </MyModal>
-      </DashboardLayout>
-    )
-}
+      </SoftBox>
+
+      {/* New Class Modal */}
+      <MyModal open={openForm} setOpen={setOpenForm} height="70vh">
+        <SoftTypography
+          color="success"
+          fontWeight="bolder"
+          textTransform="uppercase"
+          textAlign="center"
+        >
+          Create Navbar Title
+        </SoftTypography>
+        <NavbarForm setOpen={setOpenForm} reload={reload} setReload={setReload} />
+      </MyModal>
+    </DashboardLayout>
+  );
+};
