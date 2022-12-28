@@ -36,7 +36,21 @@ export const NavbarForm = ({ setOpen, reload, setReload, editMode, data }) => {
   const createNavbarTitle = () => {
     if (navbarTitle === "") {
       enqueueSnackbar("Empty Filed Detected ! Please Fill Up", { variant: "error" });
-    } else {
+    } else if(editMode){
+        const docRefUpdate = doc(firebaseDb, "navbarlist",data?.id);
+        updateDoc(docRefUpdate, { ...navbarTitle}).then((res) => {
+            enqueueSnackbar("Navbar Title List has been updated successfully", {
+              variant: "success",
+            });
+            setOpen(false);
+          })
+          .catch((err) => {
+            enqueueSnackbar("Error occured !! Please try again", { variant: "error" });
+            console.log(err)
+            setOpen(false);
+          });
+    }
+    else {
       setDoc(docRef, { ...navbarTitle, id: docRef.id })
         .then((res) => {
           enqueueSnackbar("Navbar Title List has been created successfully", {
