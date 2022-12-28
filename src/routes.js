@@ -12,6 +12,7 @@ import LanguageIcon from "@mui/icons-material/Language";
 import ArchiveIcon from "@mui/icons-material/Archive";
 import PollIcon from "@mui/icons-material/Poll";
 import { Navbar } from "Pages/Navbar/Navbar";
+import { MySkill } from "Pages/MySkill/MySkill";
 
 const routes = [
   {
@@ -31,6 +32,16 @@ const routes = [
     route: "/navbar-title",
     icon: <Shop size="12px" />,
     component: <Navbar />,
+    noCollapse: true,
+    authentication: true,
+  },
+  {
+    type: "collapse",
+    name: "My Skill",
+    key: "my-skill",
+    route: "/my-skill",
+    icon: <Shop size="12px" />,
+    component: <MySkill />,
     noCollapse: true,
     authentication: true,
   },

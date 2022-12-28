@@ -13,13 +13,13 @@ import SoftButton from "components/SoftButton";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Table from "examples/Tables/Table";
-import { NavbarForm } from "./NavbarForm";
-import { NavbarTable } from "./NavbarTable";
+import { MySkillTable } from "./MySkillTable";
+import { MySkillForm } from "./MySkillForm";
 
-export const Navbar = () => {
+export const MySkill = () => {
   const [reload, setReload] = useState(false);
 
-  const { columns, rows } = NavbarTable({ reload, setReload });
+  const { columns, rows } = MySkillTable({ reload, setReload });
   const [openForm, setOpenForm] = useState(false);
 
   return (
@@ -29,7 +29,7 @@ export const Navbar = () => {
         <SoftBox mb={3}>
           <Card>
             <SoftBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
-              <SoftTypography variant="h6">Navbar Title List</SoftTypography>
+              <SoftTypography variant="h6">My Skill</SoftTypography>
               <SoftButton color="success" onClick={() => setOpenForm(true)}>
                 New
                 <Icon>add</Icon>
@@ -59,9 +59,9 @@ export const Navbar = () => {
           textTransform="uppercase"
           textAlign="center"
         >
-          Create Navbar Title
+          Create New Skill
         </SoftTypography>
-        <NavbarForm setOpen={setOpenForm} reload={reload} setReload={setReload} />
+        <MySkillForm setOpen={setOpenForm} reload={reload} setReload={setReload} />
       </MyModal>
     </DashboardLayout>
   );
