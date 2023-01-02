@@ -1,6 +1,5 @@
 import MyModal from "components/Modal/Modal";
 import { useState, useEffect, useContext } from "react";
-import { UserContext } from "context/user";
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import SoftButton from "components/SoftButton";

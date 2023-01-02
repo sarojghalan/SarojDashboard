@@ -81,6 +81,9 @@ export const MasterBannerForm = ({ setOpen, reload, setReload, editMode, data })
       uploadTask.on("state_changed", (snapshot) => {
         const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
         console.log("k ma galti bhayo")
+      },
+      (error) => {
+        enqueueSnackbar(error, { variant: "error" });
       },()=> {
         console.log("yaa samma aaepugeko")
         getDownloadURL(uploadTask.snapshot.ref).then(async(downloadUrl)=> {

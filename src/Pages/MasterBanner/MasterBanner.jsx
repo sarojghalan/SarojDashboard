@@ -13,11 +13,12 @@ import SoftButton from "components/SoftButton";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Table from "examples/Tables/Table";
+import { MasterBannerTable } from "./MasterBannerTable";
 import { MasterBannerForm } from "./MasterBannerForm";
 
 export const MasterBanner = () => {
     const [reload , setReload] = useState(false);
-    // const {columns , rows} = MasterBannerTable({reload , setReload})
+    const {columns , rows} = MasterBannerTable({reload , setReload})
     const [openForm , setOpenForm] = useState(false)
 
     return(
@@ -43,7 +44,7 @@ export const MasterBanner = () => {
                 },
               }}
             >
-              {/* <Table columns={columns} rows={rows} /> */}
+              <Table columns={columns} rows={rows} />
             </SoftBox>
           </Card>
         </SoftBox>
