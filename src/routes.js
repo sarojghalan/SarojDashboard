@@ -13,6 +13,7 @@ import ArchiveIcon from "@mui/icons-material/Archive";
 import PollIcon from "@mui/icons-material/Poll";
 import { Navbar } from "Pages/Navbar/Navbar";
 import { MySkill } from "Pages/MySkill/MySkill";
+import { MasterBanner } from "Pages/MasterBanner/MasterBanner";
 
 const routes = [
   {
@@ -42,6 +43,16 @@ const routes = [
     route: "/my-skill",
     icon: <Shop size="12px" />,
     component: <MySkill />,
+    noCollapse: true,
+    authentication: true,
+  },
+  {
+    type: "collapse",
+    name: "Master Banner",
+    key: "master-banner",
+    route: "/master-banner",
+    icon: <Shop size="12px" />,
+    component: <MasterBanner />,
     noCollapse: true,
     authentication: true,
   },
