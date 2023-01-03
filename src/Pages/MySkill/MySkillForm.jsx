@@ -47,12 +47,9 @@ export const MySkillForm = ({ setOpen, reload, setReload, editMode, data }) => {
     } else if (editMode) {
       const docRefUpdate = doc(firebaseDb, "myskill", data?.id);
       const file = mySkill.image;
-      console.log("files are : ",file.includes("png"))
-      if(file.includes("png")){
-        const storageRef = ref(fireStorage, `skillImage/${Date.now()}.png`);
-      }else{
-        const storageRef = ref(fireStorage, `skillImage/${Date.now()}`);
-      }
+      console.log("file are : ",file)
+      const fileExtension = file.split(".").pop()
+      const storageRef = ref(fireStorage, `skillImage/${Date.now()}.${fileExtension}`);
       const uploadTask = uploadBytesResumable(storageRef, file);
 
       uploadTask.on(

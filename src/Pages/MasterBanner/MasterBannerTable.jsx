@@ -40,6 +40,15 @@ export const MasterBannerTable = ({reload , setReload}) => {
           </SoftBox>
         );
       }
+      function Description({ name }) {
+        return (
+          <SoftBox display="flex" flexDirection="column">
+            <SoftTypography variant="button" fontWeight="medium">
+            {name}
+            </SoftTypography>
+          </SoftBox>
+        );
+      }
 
       function EditAction({ reload, setReload, data }) {
         const [openEdit, setOpenEdit] = useState(false);
@@ -133,12 +142,14 @@ export const MasterBannerTable = ({reload , setReload}) => {
       const columns = [
         { name: "S.No", align: "center" },
         { name: "Master Banner", align: "left" },
+        { name: "Description", align: "left" },
         { name: "Action", align: "left" },
       ];
 
       const temp = [0, 1, 2, 3].map((item) => ({
         "S.No": <Skeleton animation="wave" width={50} />,
        "Master Banner": <Skeleton animation="wave" width={50} />,
+       "Description": <Skeleton animation="wave" width={50} />,
         Action: <Skeleton animation="wave" width={50} />,
       }));
       const [rows, setRows] = useState(temp);
@@ -155,6 +166,7 @@ export const MasterBannerTable = ({reload , setReload}) => {
                     </SoftTypography>
                   ),
                   "Master Banner": <Author image={classData?.masterBanner} />,
+                  "Description": <Description name={classData?.description} />,
                   Action: (
                     <>
                       <>

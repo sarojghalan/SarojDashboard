@@ -14,6 +14,7 @@ import PollIcon from "@mui/icons-material/Poll";
 import { Navbar } from "Pages/Navbar/Navbar";
 import { MySkill } from "Pages/MySkill/MySkill";
 import { MasterBanner } from "Pages/MasterBanner/MasterBanner";
+import { MyService } from "Pages/MyServices/MyService";
 
 const routes = [
   {
@@ -53,6 +54,16 @@ const routes = [
     route: "/master-banner",
     icon: <Shop size="12px" />,
     component: <MasterBanner />,
+    noCollapse: true,
+    authentication: true,
+  },
+  {
+    type: "collapse",
+    name: "My Services",
+    key: "my-services",
+    route: "/my-services",
+    icon: <Shop size="12px" />,
+    component: <MyService />,
     noCollapse: true,
     authentication: true,
   },

@@ -16,6 +16,7 @@ import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/
 export const MasterBannerForm = ({ setOpen, reload, setReload, editMode, data }) => {
   const initialState = {
     masterBanner: "",
+    description: "",
   };
 
   const [masterBannerData, setMasterBannerData] = useState(initialState);
@@ -24,17 +25,25 @@ export const MasterBannerForm = ({ setOpen, reload, setReload, editMode, data })
 
   useEffect(() => {
     if (editMode && data) {
-      setMasterBanner({
+      setMasterBannerData({
         masterBanner: data.masterBanner,
+        description: data.description,
       });
     }
   }, [editMode, data]);
 
   const handleMasterBanner = (e) => {
-    setMasterBannerData({
-      ...masterBannerData,
-      masterBanner: e.target.files[0],
-    });
+    if (e.target.name === "masterBanner") {
+      setMasterBannerData({
+        ...masterBannerData,
+        masterBanner: e.target.files[0],
+      });
+    } else {
+      setMasterBannerData({
+        ...masterBannerData,
+        [e.target.name]: e.target.value,
+      });
+    }
   };
 
   const docRef = doc(collection(firebaseDb, "masterBanner"));
@@ -60,7 +69,11 @@ export const MasterBannerForm = ({ setOpen, reload, setReload, editMode, data })
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then(async (downloadUrl) => {
-            await updateDoc(docRefUpdate, { ...masterBannerData, masterBanner: downloadUrl,createdAt: new Date() })
+            await updateDoc(docRefUpdate, {
+              ...masterBannerData,
+              masterBanner: downloadUrl,
+              createdAt: new Date(),
+            })
               .then((res) => {
                 enqueueSnackbar("Master Banner has been updated successfully", {
                   variant: "success",
@@ -78,27 +91,38 @@ export const MasterBannerForm = ({ setOpen, reload, setReload, editMode, data })
       const file = masterBannerData.masterBanner;
       const storageRef = ref(fireStorage, `masterBanner/${file.name}`);
       const uploadTask = uploadBytesResumable(storageRef, file);
-      uploadTask.on("state_changed", (snapshot) => {
-        const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-        console.log("k ma galti bhayo")
-      },
-      (error) => {
-        enqueueSnackbar(error, { variant: "error" });
-      },()=> {
-        console.log("yaa samma aaepugeko")
-        getDownloadURL(uploadTask.snapshot.ref).then(async(downloadUrl)=> {
-            await setDoc(docRef, { ...masterBannerData, masterBanner:downloadUrl,id: docRef.id,createdAt:new Date()})
-            .then((res) => {
-              enqueueSnackbar("Master Banner has been created successfully", { variant: "success" });
-              setOpen(false);
-              console.log("k bhayo pheri")
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+          console.log("k ma galti bhayo");
+        },
+        (error) => {
+          enqueueSnackbar(error, { variant: "error" });
+        },
+        () => {
+          console.log("yaa samma aaepugeko");
+          getDownloadURL(uploadTask.snapshot.ref).then(async (downloadUrl) => {
+            await setDoc(docRef, {
+              ...masterBannerData,
+              masterBanner: downloadUrl,
+              id: docRef.id,
+              createdAt: new Date(),
             })
-            .catch((err) => {
-              console.log(err);
-              setOpen(false);
-            });
-        })
-      });
+              .then((res) => {
+                enqueueSnackbar("Master Banner has been created successfully", {
+                  variant: "success",
+                });
+                setOpen(false);
+                console.log("k bhayo pheri");
+              })
+              .catch((err) => {
+                console.log(err);
+                setOpen(false);
+              });
+          });
+        }
+      );
     }
   };
 
@@ -114,6 +138,20 @@ export const MasterBannerForm = ({ setOpen, reload, setReload, editMode, data })
         <SoftInput
           type="file"
           name="masterBanner"
+          placeholder="Input File Here.."
+          onChange={handleMasterBanner}
+        />
+      </SoftBox>
+      <SoftBox mb={2}>
+        <SoftBox mb={1} ml={0.5}>
+          <SoftTypography component="label" variant="caption" fontWeight="bold">
+            Banner Text
+            <Required />
+          </SoftTypography>
+        </SoftBox>
+        <SoftInput
+          type="text"
+          name="description"
           placeholder="Input File Here.."
           onChange={handleMasterBanner}
         />

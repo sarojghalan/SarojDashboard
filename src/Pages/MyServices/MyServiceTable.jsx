@@ -1,6 +1,5 @@
 import MyModal from "components/Modal/Modal";
 import { useState, useEffect, useContext } from "react";
-import { UserContext } from "context/user";
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import SoftButton from "components/SoftButton";
@@ -13,23 +12,23 @@ import { useNavigate } from "react-router-dom";
 import firebaseDb from "config/firebase-config";
 import { deleteDoc, doc, setDoc } from "firebase/firestore";
 import { collection, query, where, onSnapshot } from "firebase/firestore";
-import { NavbarForm } from "./NavbarForm";
+import { MyServiceForm } from "./MyServiceForm";
 
-export const NavbarTable = ({ reload, setReload }) => {
-  const [navbarListData, setNavbarListData] = useState([]);
+export const MyServiceTable = ({ reload, setReload }) => {
+  const [myServiceData, setMyServiceData] = useState([]);
 
   useEffect(() => {
-    const q = query(collection(firebaseDb, "navbarlist"));
+    const q = query(collection(firebaseDb, "myservice"));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const navbarList = [];
+      const service = [];
       querySnapshot.forEach((doc) => {
-        navbarList.push(doc.data());
+        service.push(doc.data());
       });
-      setNavbarListData(navbarList);
+      setMyServiceData(service);
     });
   }, []);
 
-  console.log("navbar list : ",navbarListData)
+  console.log("navbar list : ",myServiceData)
 
   function Author({ name }) {
     return (
@@ -63,7 +62,7 @@ export const NavbarTable = ({ reload, setReload }) => {
             Edit Navbar List
           </SoftTypography>
 
-          <NavbarForm
+          <MyServiceForm
             editMode={true}
             setOpen={setOpenEdit}
             data={data}
@@ -80,11 +79,11 @@ export const NavbarTable = ({ reload, setReload }) => {
     const [loading, setLoading] = useState(false);
     const { enqueueSnackbar } = useSnackbar();
 
-    const deleteNavbarList = async () => {
-      const deleteRef = doc(firebaseDb, "navbarlist", data?.id);
+    const deleteMyService = async () => {
+      const deleteRef = doc(firebaseDb, "myservice", data?.id);
       await deleteDoc(deleteRef)
         .then((res) => {
-          enqueueSnackbar("Navbar List has been deleted successfulyy", { variant: "success" });
+          enqueueSnackbar("My Service has been deleted successfulyy", { variant: "success" });
         })
         .catch((err) => {
             enqueueSnackbar("Error Occured !!! Try Again", { variant: "error" });
@@ -112,13 +111,13 @@ export const NavbarTable = ({ reload, setReload }) => {
             Delete Navbar List
           </SoftTypography>
           <SoftTypography color="dark" fontWeight="normal" textTransform="uppercase" mb={2}>
-            Do you want to remove this Navbar List?
+            Do you want to remove this Service?
           </SoftTypography>
           <LoadingButton
             title="confirm"
             loading={loading}
             color="success"
-            action={deleteNavbarList}
+            action={deleteMyService}
             size="small"
           />
           &nbsp;
@@ -132,30 +131,33 @@ export const NavbarTable = ({ reload, setReload }) => {
 
   const columns = [
     { name: "S.No", align: "center" },
-    { name: "Navbar List Title", align: "left" },
+    { name: "Service Title", align: "left" },
+    { name: "Service Description", align: "left" },
     { name: "Action", align: "left" },
   ];
 
   const temp = [0, 1, 2, 3].map((item) => ({
     "S.No": <Skeleton animation="wave" width={50} />,
-    "Navbar List Title": <Skeleton animation="wave" width={50} />,
+    "Service Title": <Skeleton animation="wave" width={50} />,
+    "Service Description": <Skeleton animation="wave" width={50} />,
     Action: <Skeleton animation="wave" width={50} />,
   }));
 
   const [rows, setRows] = useState(temp);
 
   useEffect(() => {
-    if (navbarListData !== []) {
+    if (myServiceData !== []) {
       let temp = [];
-      for (let i = 0; i < navbarListData.length; i++) {
-        let classData = navbarListData[i];
+      for (let i = 0; i < myServiceData.length; i++) {
+        let classData = myServiceData[i];
         temp.push({
           "S.No": (
             <SoftTypography variant="caption" color="secondary" fontWeight="medium">
               {i + 1}
             </SoftTypography>
           ),
-          "Navbar List Title": <Author name={parse(classData?.title)} />,
+          "Service Title": <Author name={classData?.title} />,
+          "Service Description": <Author name={classData?.description.substring(0,30)} />,
           Action: (
             <>
               <>
@@ -185,7 +187,7 @@ export const NavbarTable = ({ reload, setReload }) => {
       }
       setRows(temp);
     }
-  }, [navbarListData]);
+  }, [myServiceData]);
 
   return {
     columns,
