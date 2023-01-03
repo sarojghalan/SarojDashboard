@@ -17,6 +17,7 @@ export const MyServiceForm = ({ setOpen, reload, setReload, editMode, data }) =>
   const initialState = {
     title: "",
     description: "",
+    description_title:""
   };
 
   const [myServiceData, setMyServiceData] = useState(initialState);
@@ -85,6 +86,22 @@ export const MyServiceForm = ({ setOpen, reload, setReload, editMode, data }) =>
           required
           name="title"
           value={myServiceData.title}
+          onChange={handleMyService}
+        />
+      </SoftBox>
+      <SoftBox mb={2}>
+        <SoftBox mb={1} ml={0.5}>
+          <SoftTypography component="label" variant="caption" fontWeight="bold">
+            Service Description Title
+            <Required />
+          </SoftTypography>
+        </SoftBox>
+        <SoftInput
+          type="text"
+          placeholder="Enter here..."
+          required
+          name="description_title"
+          value={myServiceData.description_title}
           onChange={handleMyService}
         />
       </SoftBox>

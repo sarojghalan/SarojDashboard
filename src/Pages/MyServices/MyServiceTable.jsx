@@ -133,6 +133,7 @@ export const MyServiceTable = ({ reload, setReload }) => {
     { name: "S.No", align: "center" },
     { name: "Service Title", align: "left" },
     { name: "Service Description", align: "left" },
+    { name: "Description Topic", align: "left" },
     { name: "Action", align: "left" },
   ];
 
@@ -140,6 +141,7 @@ export const MyServiceTable = ({ reload, setReload }) => {
     "S.No": <Skeleton animation="wave" width={50} />,
     "Service Title": <Skeleton animation="wave" width={50} />,
     "Service Description": <Skeleton animation="wave" width={50} />,
+    "Description Topic": <Skeleton animation="wave" width={50} />,
     Action: <Skeleton animation="wave" width={50} />,
   }));
 
@@ -157,7 +159,8 @@ export const MyServiceTable = ({ reload, setReload }) => {
             </SoftTypography>
           ),
           "Service Title": <Author name={classData?.title} />,
-          "Service Description": <Author name={classData?.description.substring(0,30)} />,
+          "Service Description": <Author name={classData?.description.substring(0,20)} />,
+          "Description Topic": <Author name={classData?.description_title} />,
           Action: (
             <>
               <>
