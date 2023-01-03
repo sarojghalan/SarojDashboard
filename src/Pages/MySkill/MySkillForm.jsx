@@ -16,7 +16,8 @@ import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/
 export const MySkillForm = ({ setOpen, reload, setReload, editMode, data }) => {
   const initialState = {
     skill: "",
-    description:""
+    description: "",
+    image: "",
   };
   const [mySkill, setMySkill] = useState(initialState);
   const { enqueueSnackbar } = useSnackbar();
@@ -26,12 +27,15 @@ export const MySkillForm = ({ setOpen, reload, setReload, editMode, data }) => {
     if (editMode && data) {
       setMySkill({
         skill: data.skill,
-        description: data.description
+        description: data.description,
       });
     }
   }, [editMode, data]);
 
   const handleSkill = (e) => {
+    if (e.target.name === "image") {
+      setMySkill({ ...mySkill, image: e.target.files[0] });
+    }
     setMySkill({ ...mySkill, [e.target.name]: e.target.value });
   };
 
@@ -40,33 +44,76 @@ export const MySkillForm = ({ setOpen, reload, setReload, editMode, data }) => {
   const createSkill = () => {
     if (mySkill.title === "" || mySkill.description === "") {
       enqueueSnackbar("Empty Filed Detected ! Please Fill Up", { variant: "error" });
-    } else if(editMode){
-        const docRefUpdate = doc(firebaseDb, "myskill",data?.id);
-        updateDoc(docRefUpdate, { ...mySkill}).then((res) => {
-            enqueueSnackbar("Your skill has been updated successfully", {
-              variant: "success",
-            });
-            setOpen(false);
-          })
-          .catch((err) => {
-            enqueueSnackbar("Error occured !! Please try again", { variant: "error" });
-            console.log(err)
-            setOpen(false);
+    } else if (editMode) {
+      const docRefUpdate = doc(firebaseDb, "myskill", data?.id);
+      const file = mySkill.image;
+      console.log("files are : ",file.includes("png"))
+      if(file.includes("png")){
+        const storageRef = ref(fireStorage, `skillImage/${Date.now()}.png`);
+      }else{
+        const storageRef = ref(fireStorage, `skillImage/${Date.now()}`);
+      }
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+        },
+        (error) => {
+          enqueueSnackbar(error, { variant: "error" });
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then(async (downloadUrl) => {
+            await updateDoc(docRefUpdate, { ...mySkill, image: downloadUrl, createdAt: new Date() })
+              .then((res) => {
+                enqueueSnackbar("Your skill has been updated successfully", {
+                  variant: "success",
+                });
+                setOpen(false);
+              })
+              .catch((err) => {
+                enqueueSnackbar("Error occured !! Please try again", { variant: "error" });
+                console.log(err);
+                setOpen(false);
+              });
           });
-    }
-    else {
-      setDoc(docRef, { ...mySkill, id: docRef.id })
-        .then((res) => {
-          enqueueSnackbar("Your Skill has been created successfully", {
-            variant: "success",
+        }
+      );
+    } else {
+      const file = mySkill.image;
+      const storageRef = ref(fireStorage, `skillImage/${file.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+        },
+        (error) => {
+          enqueueSnackbar(error, { variant: "error" });
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then(async (downloadUrl) => {
+            await setDoc(docRef, {
+              ...mySkill,
+              image: downloadUrl,
+              id: docRef.id,
+              createdAt: new Date(),
+            })
+              .then((res) => {
+                enqueueSnackbar("Your Skill has been created successfully", {
+                  variant: "success",
+                });
+                setOpen(false);
+              })
+              .catch((err) => {
+                enqueueSnackbar("Error occured !! Please try again", { variant: "error" });
+                console.log(err);
+                setOpen(false);
+              });
           });
-          setOpen(false);
-        })
-        .catch((err) => {
-          enqueueSnackbar("Error occured !! Please try again", { variant: "error" });
-          console.log(err)
-          setOpen(false);
-        });
+        }
+      );
     }
   };
 
@@ -89,21 +136,35 @@ export const MySkillForm = ({ setOpen, reload, setReload, editMode, data }) => {
         />
       </SoftBox>
       <SoftBox mb={2}>
-            <SoftBox mb={1} ml={0.5}>
-              <SoftTypography component="label" variant="caption" fontWeight="bold">
-                Description
-                <Required />
-              </SoftTypography>
-            </SoftBox>
-            <SoftInput
-              placeholder="Type here..."
-              multiline
-              rows={5}
-              name="description"
-              value={mySkill.description}
-              onChange={handleSkill}
-            />
-          </SoftBox>
+        <SoftBox mb={1} ml={0.5}>
+          <SoftTypography component="label" variant="caption" fontWeight="bold">
+            Description
+            <Required />
+          </SoftTypography>
+        </SoftBox>
+        <SoftInput
+          placeholder="Type here..."
+          multiline
+          rows={5}
+          name="description"
+          value={mySkill.description}
+          onChange={handleSkill}
+        />
+      </SoftBox>
+      <SoftBox mb={2}>
+        <SoftBox mb={1} ml={0.5}>
+          <SoftTypography component="label" variant="caption" fontWeight="bold">
+            Skill Image
+            <Required />
+          </SoftTypography>
+        </SoftBox>
+        <SoftInput
+          type="file"
+          name="image"
+          placeholder="Input File Here.."
+          onChange={handleSkill}
+        />
+      </SoftBox>
       <SoftBox mt={4} mb={1}>
         <LoadingButton
           title={editMode ? "Update Navbar Title" : "Create Navbar Title"}
