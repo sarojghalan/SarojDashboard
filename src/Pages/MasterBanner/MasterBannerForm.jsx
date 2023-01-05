@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import Required from "components/Required";
 // Soft Imports
-import SoftBox from "components/SoftBox";
+import SoftBox from "components/SoftBox"; 
 import SoftTypography from "components/SoftTypography";
 import SoftInput from "components/SoftInput";
 import SoftButton from "components/SoftButton";
