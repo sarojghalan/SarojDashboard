@@ -15,6 +15,7 @@ import { Navbar } from "Pages/Navbar/Navbar";
 import { MySkill } from "Pages/MySkill/MySkill";
 import { MasterBanner } from "Pages/MasterBanner/MasterBanner";
 import { MyService } from "Pages/MyServices/MyService";
+import { AboutMe } from "Pages/AboutMe/AboutMe";
 
 const routes = [
   {
@@ -64,6 +65,16 @@ const routes = [
     route: "/my-services",
     icon: <Shop size="12px" />,
     component: <MyService />,
+    noCollapse: true,
+    authentication: true,
+  },
+  {
+    type: "collapse",
+    name: "About Me",
+    key: "about-me",
+    route: "/about-me",
+    icon: <Shop size="12px" />,
+    component: <AboutMe />,
     noCollapse: true,
     authentication: true,
   },

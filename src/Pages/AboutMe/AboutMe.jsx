@@ -13,12 +13,13 @@ import SoftButton from "components/SoftButton";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Table from "examples/Tables/Table";
-import { MasterBannerTable } from "./MasterBannerTable";
-import { MasterBannerForm } from "./MasterBannerForm";
+import { AboutMeTable } from "./AboutMeTable";
+import { AboutMeForm } from "./AboutMeForm";
 
-export const MasterBanner = () => {
+
+export const AboutMe = () => {
     const [reload , setReload] = useState(false);
-    const {columns , rows} = MasterBannerTable({reload , setReload})
+    const {columns , rows} = AboutMeTable({reload , setReload})
     const [openForm , setOpenForm] = useState(false)
 
     return(
@@ -28,7 +29,7 @@ export const MasterBanner = () => {
         <SoftBox mb={3}>
           <Card>
             <SoftBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
-              <SoftTypography variant="h6">Master Banner</SoftTypography>
+              <SoftTypography variant="h6">About Me</SoftTypography>
               <SoftButton color="success" onClick={() => setOpenForm(true)}>
                 New
                 <Icon>add</Icon>
@@ -58,9 +59,9 @@ export const MasterBanner = () => {
           textTransform="uppercase"
           textAlign="center"
         >
-          Create Master Banner
+          Create About You
         </SoftTypography>
-        <MasterBannerForm setOpen={setOpenForm} reload={reload} setReload={setReload} />
+        <AboutMeForm setOpen={setOpenForm} reload={reload} setReload={setReload} />
       </MyModal>
     </DashboardLayout>
     )

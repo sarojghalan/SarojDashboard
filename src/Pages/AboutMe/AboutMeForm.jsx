@@ -13,50 +13,54 @@ import { fireStorage } from "config/firebase-config";
 import { setDoc, doc, collection, updateDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
-export const MyServiceForm = ({ setOpen, reload, setReload, editMode, data }) => {
+export const AboutMeForm = ({ setOpen, reload, setReload, editMode, data }) => {
   const initialState = {
-    title: "",
+    title:"",
+    image: "",
     description: "",
-    description_title: "",
-    image: "image",
   };
 
-  const [myServiceData, setMyServiceData] = useState(initialState);
+  const [aboutMeData, setAboutMeData] = useState(initialState);
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (editMode && data) {
-      setMyServiceData({
+      setAboutMeData({
         title: data.title,
-        description: data.description,
-        description_title: data.description_title,
         image: data.image,
+        description: data.description,
       });
     }
   }, [editMode, data]);
 
-  const handleMyService = (e) => {
+  const handleAboutMe = (e) => {
     if (e.target.name === "image") {
-      setMyServiceData({
-        ...myServiceData,
+      setAboutMeData({
+        ...aboutMeData,
         image: e.target.files[0],
       });
     } else {
-      setMyServiceData({ ...myServiceData, [e.target.name]: e.target.value });
+      setAboutMeData({
+        ...aboutMeData,
+        [e.target.name]: e.target.value,
+      });
     }
   };
 
-  const docRef = doc(collection(firebaseDb, "myservice"));
+  const docRef = doc(collection(firebaseDb, "aboutme"));
 
-  const createMyService = () => {
-    if (myServiceData.title === "" || myServiceData.description === "") {
-      enqueueSnackbar("Empty Filed Detected ! Please Fill Up", { variant: "error" });
+  const createAboutMe = () => {
+    if (aboutMeData.image === "" || aboutMeData.title === "" || aboutMeData.description === "") {
+      enqueueSnackbar("Empty field detected !", {
+        variant: "error",
+      });
     } else if (editMode) {
-      const docRefUpdate = doc(firebaseDb, "myservice", data?.id);
-      const file = myServiceData.image;
-      const storageRef = ref(fireStorage, `services/${file.name}`);
+      const docRefUpdate = doc(firebaseDb, "aboutme", data?.id);
+      const file = aboutMeData.image;
+      const storageRef = ref(fireStorage, `aboutme/${file.name}`);
       const uploadTask = uploadBytesResumable(storageRef, file);
+
       uploadTask.on(
         "state_changed",
         (snapshot) => {
@@ -68,18 +72,17 @@ export const MyServiceForm = ({ setOpen, reload, setReload, editMode, data }) =>
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then(async (downloadUrl) => {
             await updateDoc(docRefUpdate, {
-              ...myServiceData,
+              ...aboutMeData,
               image: downloadUrl,
               createdAt: new Date(),
             })
               .then((res) => {
-                enqueueSnackbar("My Service has been updated successfully", {
+                enqueueSnackbar("About Me data has been updated successfully", {
                   variant: "success",
                 });
                 setOpen(false);
               })
               .catch((err) => {
-                enqueueSnackbar("Error occured !! Please try again", { variant: "error" });
                 console.log(err);
                 setOpen(false);
               });
@@ -87,33 +90,35 @@ export const MyServiceForm = ({ setOpen, reload, setReload, editMode, data }) =>
         }
       );
     } else {
-      const file = myServiceData.image;
-      const storageRef = ref(fireStorage, `services/${file.name}`);
+      const file = aboutMeData.image;
+      const storageRef = ref(fireStorage, `aboutme/${file.name}`);
       const uploadTask = uploadBytesResumable(storageRef, file);
       uploadTask.on(
         "state_changed",
         (snapshot) => {
           const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+          console.log("k ma galti bhayo");
         },
         (error) => {
           enqueueSnackbar(error, { variant: "error" });
         },
         () => {
+          console.log("yaa samma aaepugeko");
           getDownloadURL(uploadTask.snapshot.ref).then(async (downloadUrl) => {
             await setDoc(docRef, {
-              ...myServiceData,
+              ...aboutMeData,
               image: downloadUrl,
               id: docRef.id,
               createdAt: new Date(),
             })
               .then((res) => {
-                enqueueSnackbar("My Service has been created successfully", {
+                enqueueSnackbar("About Me has been created successfully", {
                   variant: "success",
                 });
                 setOpen(false);
+                console.log("k bhayo pheri");
               })
               .catch((err) => {
-                enqueueSnackbar("Error occured !! Please try again", { variant: "error" });
                 console.log(err);
                 setOpen(false);
               });
@@ -125,58 +130,24 @@ export const MyServiceForm = ({ setOpen, reload, setReload, editMode, data }) =>
 
   return (
     <SoftBox component="form" role="form">
-      <SoftBox mb={2}>
+    <SoftBox mb={2}>
         <SoftBox mb={1} ml={0.5}>
           <SoftTypography component="label" variant="caption" fontWeight="bold">
-            Service Title
+            About Me Title
             <Required />
           </SoftTypography>
         </SoftBox>
         <SoftInput
           type="text"
-          placeholder="Enter here..."
-          required
           name="title"
-          value={myServiceData.title}
-          onChange={handleMyService}
+          placeholder="Enter Title Here.."
+          onChange={handleAboutMe}
         />
       </SoftBox>
       <SoftBox mb={2}>
         <SoftBox mb={1} ml={0.5}>
           <SoftTypography component="label" variant="caption" fontWeight="bold">
-            Service Description Title
-            <Required />
-          </SoftTypography>
-        </SoftBox>
-        <SoftInput
-          type="text"
-          placeholder="Enter here..."
-          required
-          name="description_title"
-          value={myServiceData.description_title}
-          onChange={handleMyService}
-        />
-      </SoftBox>
-      <SoftBox mb={2}>
-        <SoftBox mb={1} ml={0.5}>
-          <SoftTypography component="label" variant="caption" fontWeight="bold">
-            Service Description
-            <Required />
-          </SoftTypography>
-        </SoftBox>
-        <SoftInput
-          type="text"
-          placeholder="Enter here..."
-          required
-          name="description"
-          value={myServiceData.description}
-          onChange={handleMyService}
-        />
-      </SoftBox>
-      <SoftBox mb={2}>
-        <SoftBox mb={1} ml={0.5}>
-          <SoftTypography component="label" variant="caption" fontWeight="bold">
-            My Service Image
+            About Me Image
             <Required />
           </SoftTypography>
         </SoftBox>
@@ -184,14 +155,28 @@ export const MyServiceForm = ({ setOpen, reload, setReload, editMode, data }) =>
           type="file"
           name="image"
           placeholder="Input File Here.."
-          onChange={handleMyService}
+          onChange={handleAboutMe}
+        />
+      </SoftBox>
+      <SoftBox mb={2}>
+        <SoftBox mb={1} ml={0.5}>
+          <SoftTypography component="label" variant="caption" fontWeight="bold">
+            About Me
+            <Required />
+          </SoftTypography>
+        </SoftBox>
+        <SoftInput
+          type="text"
+          name="description"
+          placeholder="Input File Here.."
+          onChange={handleAboutMe}
         />
       </SoftBox>
       <SoftBox mt={4} mb={1}>
         <LoadingButton
-          title={editMode ? "Update Service" : "Create Service"}
+          title={editMode ? "Update Navbar Title" : "Create Navbar Title"}
           loading={loading}
-          action={createMyService}
+          action={createAboutMe}
         />
         &nbsp;
         <SoftButton variant="gradient" color="error" onClick={() => setOpen(false)}>

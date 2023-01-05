@@ -23,7 +23,7 @@ export const MasterBannerForm = ({ setOpen, reload, setReload, editMode, data })
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
+  useEffect(() => { 
     if (editMode && data) {
       setMasterBannerData({
         masterBanner: data.masterBanner,
