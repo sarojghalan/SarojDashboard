@@ -13,23 +13,21 @@ import { useNavigate } from "react-router-dom";
 import firebaseDb from "config/firebase-config";
 import { deleteDoc, doc, setDoc } from "firebase/firestore";
 import { collection, query, where, onSnapshot } from "firebase/firestore";
-import { MyProjectForm } from "./MyProjectForm";
+import { LanguageForm } from "./LanguageForm";
 
-export const MyProjectTable = ({reload , setReload}) => {
-    const [projectData , setProjectData] = useState([]);
+export const LanguageTable = ({reload , setReload}) => {
+    const [languageData , setLanguageData] = useState([]);
 
     useEffect(() => {
-        const q = query(collection(firebaseDb, "myproject"));
+        const q = query(collection(firebaseDb, "language"));
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
-          const banner = [];
+          const language = [];
           querySnapshot.forEach((doc) => {
-            banner.push(doc.data());
+            language.push(doc.data());
           });
-          setProjectData(banner);
+          setLanguageData(language);
         });
       }, []);
-
-      console.log("Master Banner Data : ",projectData)
 
       function Author({ image }) {
         return (
@@ -69,10 +67,10 @@ export const MyProjectTable = ({reload , setReload}) => {
                 textTransform="uppercase"
                 textAlign="center"
               >
-                Edit Project
+                Edit Language
               </SoftTypography>
     
-              <MyProjectForm
+              <LanguageForm
                 editMode={true}
                 setOpen={setOpenEdit}
                 data={data}
@@ -89,8 +87,8 @@ export const MyProjectTable = ({reload , setReload}) => {
         const [loading, setLoading] = useState(false);
         const { enqueueSnackbar } = useSnackbar();
     
-        const deleteProject = async () => {
-          const deleteRef = doc(firebaseDb, "myproject", data?.id);
+        const deleteLanguage = async () => {
+          const deleteRef = doc(firebaseDb, "language", data?.id);
           await deleteDoc(deleteRef)
             .then((res) => {
               enqueueSnackbar("Project has been deleted successfulyy", { variant: "success" });
@@ -118,16 +116,16 @@ export const MyProjectTable = ({reload , setReload}) => {
                 textAlign="center"
                 mb={2}
               >
-                Delete Project
+                Delete Language
               </SoftTypography>
               <SoftTypography color="dark" fontWeight="normal" textTransform="uppercase" mb={2}>
-                Do you want to remove this Project?
+                Do you want to remove this Language?
               </SoftTypography>
               <LoadingButton
                 title="confirm"
                 loading={loading}
                 color="success"
-                action={deleteProject}
+                action={deleteLanguage}
                 size="small"
               />
               &nbsp;
@@ -143,7 +141,6 @@ export const MyProjectTable = ({reload , setReload}) => {
         { name: "S.No", align: "center" },
         { name: "Title", align: "center" },
         { name: "image", align: "left" },
-        { name: "Description", align: "left" },
         { name: "Action", align: "left" },
       ];
 
@@ -151,16 +148,15 @@ export const MyProjectTable = ({reload , setReload}) => {
         "S.No": <Skeleton animation="wave" width={50} />,
         "Title": <Skeleton animation="wave" width={50} />,
        "image": <Skeleton animation="wave" width={50} />,
-       "Description": <Skeleton animation="wave" width={50} />,
         Action: <Skeleton animation="wave" width={50} />,
       }));
       const [rows, setRows] = useState(temp);
 
           useEffect(() => {
-            if (projectData !== []) {
+            if (languageData !== []) {
               let temp = [];
-              for (let i = 0; i < projectData.length; i++) {
-                let classData = projectData[i];
+              for (let i = 0; i < languageData.length; i++) {
+                let classData = languageData[i];
                 temp.push({
                   "S.No": (
                     <SoftTypography variant="caption" color="secondary" fontWeight="medium">
@@ -169,7 +165,6 @@ export const MyProjectTable = ({reload , setReload}) => {
                   ),
                   "Title": <Description name={classData?.title} />,
                   "image": <Author image={classData?.image} />,
-                  "Description": <Description name={classData?.description.substring(0,100)} />,
                   Action: (
                     <>
                       <>
@@ -194,7 +189,7 @@ export const MyProjectTable = ({reload , setReload}) => {
               }
               setRows(temp);
             }
-          }, [projectData]);
+          }, [languageData]);
 
 
     return{

@@ -13,8 +13,7 @@ import SoftButton from "components/SoftButton";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Table from "examples/Tables/Table";
-import { MyProjectForm } from "./MyProjectForm";
-import { MyProjectTable } from "./MyProjectTable";
+
 
 export const MyProject = () => {
     const [reload , setReload] = useState(false);
@@ -28,7 +27,7 @@ export const MyProject = () => {
         <SoftBox mb={3}>
           <Card>
             <SoftBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
-              <SoftTypography variant="h6">My Projects</SoftTypography>
+              <SoftTypography variant="h6">My CV</SoftTypography>
               <SoftButton color="success" onClick={() => setOpenForm(true)}>
                 New
                 <Icon>add</Icon>
@@ -58,7 +57,7 @@ export const MyProject = () => {
           textTransform="uppercase"
           textAlign="center"
         >
-          Create Your Project
+          Upload CV
         </SoftTypography>
         <MyProjectForm setOpen={setOpenForm} reload={reload} setReload={setReload} />
       </MyModal>

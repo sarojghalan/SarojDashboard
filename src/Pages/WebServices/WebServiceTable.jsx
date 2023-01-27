@@ -12,23 +12,23 @@ import { useNavigate } from "react-router-dom";
 import firebaseDb from "config/firebase-config";
 import { deleteDoc, doc, setDoc } from "firebase/firestore";
 import { collection, query, where, onSnapshot } from "firebase/firestore";
-import { MySkillForm } from "./MySkillForm";
+import { WebServiceForm } from "./WebServiceForm";
 
-export const MySkillTable = ({ reload, setReload }) => {
-  const [mySkillData, setMySkillData] = useState([]);
+export const WebServiceTable = ({ reload, setReload }) => {
+  const [webServiceData, setWebServiceData] = useState([]);
 
   useEffect(() => {
-    const q = query(collection(firebaseDb, "myskill"));
+    const q = query(collection(firebaseDb, "webservice"));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const myskill = [];
+      const webservice = [];
       querySnapshot.forEach((doc) => {
-        myskill.push(doc.data());
+        webservice.push(doc.data());
       });
-      setMySkillData(myskill);
+      setWebServiceData(webservice);
     });
   }, []);
 
-  console.log("navbar list : ", mySkillData);
+  console.log("navbar list : ",webServiceData)
 
   function Author({ name }) {
     return (
@@ -62,7 +62,7 @@ export const MySkillTable = ({ reload, setReload }) => {
             Edit Navbar List
           </SoftTypography>
 
-          <MySkillForm
+          <WebServiceForm
             editMode={true}
             setOpen={setOpenEdit}
             data={data}
@@ -79,14 +79,14 @@ export const MySkillTable = ({ reload, setReload }) => {
     const [loading, setLoading] = useState(false);
     const { enqueueSnackbar } = useSnackbar();
 
-    const deleteSkill = async () => {
-      const deleteRef = doc(firebaseDb, "myskill", data?.id);
+    const deleteWebService = async () => {
+      const deleteRef = doc(firebaseDb, "webservice", data?.id);
       await deleteDoc(deleteRef)
         .then((res) => {
-          enqueueSnackbar("Skill has been deleted successfulyy", { variant: "success" });
+          enqueueSnackbar("Web Service has been deleted successfulyy", { variant: "success" });
         })
         .catch((err) => {
-          enqueueSnackbar("Error Occured !!! Try Again", { variant: "error" });
+            enqueueSnackbar("Error Occured !!! Try Again", { variant: "error" });
           console.log(err);
         });
     };
@@ -94,7 +94,7 @@ export const MySkillTable = ({ reload, setReload }) => {
     return (
       <>
         <SoftBox display="flex" alignItems="center" mt={{ xs: 2, sm: 0 }} ml={{ xs: -1.5, sm: 0 }}>
-          <SoftBox mr={1}>
+          <SoftBox mr={1}> 
             <SoftButton variant="text" color="error" onClick={() => setOpenDelete(true)}>
               <Icon>delete</Icon>&nbsp;Delete
             </SoftButton>
@@ -108,16 +108,16 @@ export const MySkillTable = ({ reload, setReload }) => {
             textAlign="center"
             mb={2}
           >
-            Delete Skill
+            Delete Web Service
           </SoftTypography>
           <SoftTypography color="dark" fontWeight="normal" textTransform="uppercase" mb={2}>
-            Do you want to remove this Skill?
+            Do you want to remove this Web Service?
           </SoftTypography>
           <LoadingButton
             title="confirm"
             loading={loading}
             color="success"
-            action={deleteSkill}
+            action={deleteWebService}
             size="small"
           />
           &nbsp;
@@ -131,33 +131,33 @@ export const MySkillTable = ({ reload, setReload }) => {
 
   const columns = [
     { name: "S.No", align: "center" },
-    { name: "Skill Title", align: "left" },
-    { name: "Skill Description", align: "left" },
+    { name: "Web Service Title", align: "left" },
+    { name: "Web Service Description", align: "left" },
     { name: "Action", align: "left" },
   ];
 
   const temp = [0, 1, 2, 3].map((item) => ({
     "S.No": <Skeleton animation="wave" width={50} />,
-    "Skill Title": <Skeleton animation="wave" width={50} />,
-    "Skill Description": <Skeleton animation="wave" width={50} />,
+    "Web Service Title": <Skeleton animation="wave" width={50} />,
+    "Web Service Description": <Skeleton animation="wave" width={50} />,
     Action: <Skeleton animation="wave" width={50} />,
   }));
 
   const [rows, setRows] = useState(temp);
 
   useEffect(() => {
-    if (mySkillData !== []) {
+    if (webServiceData !== []) {
       let temp = [];
-      for (let i = 0; i < mySkillData.length; i++) {
-        let classData = mySkillData[i];
+      for (let i = 0; i < webServiceData.length; i++) {
+        let classData = webServiceData[i];
         temp.push({
           "S.No": (
             <SoftTypography variant="caption" color="secondary" fontWeight="medium">
               {i + 1}
             </SoftTypography>
           ),
-          "Skill Title": <Author name={parse(classData?.skill)} />,
-          "Skill Description": <Author name={parse(classData?.description.substring(0, 120))} />,
+          "Web Service Title": <Author name={classData?.title} />,
+          "Web Service Description": <Author name={classData?.description.substring(0,20)} />,
           Action: (
             <>
               <>
@@ -173,7 +173,11 @@ export const MySkillTable = ({ reload, setReload }) => {
                   </SoftBox>
 
                   <SoftBox>
-                    <DeleteAction data={classData} reload={reload} setReload={setReload} />
+                    <DeleteAction
+                      data={classData}
+                      reload={reload}
+                      setReload={setReload}
+                    />
                   </SoftBox>
                 </SoftBox>
               </>
@@ -183,10 +187,10 @@ export const MySkillTable = ({ reload, setReload }) => {
       }
       setRows(temp);
     }
-  }, [mySkillData]);
+  }, [webServiceData]);
 
   return {
     columns,
-    rows,
+    rows
   };
 };

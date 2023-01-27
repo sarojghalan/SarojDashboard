@@ -1,5 +1,6 @@
 import MyModal from "components/Modal/Modal";
 import { useState, useEffect, useContext } from "react";
+import { UserContext } from "context/user";
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import SoftButton from "components/SoftButton";
@@ -12,23 +13,23 @@ import { useNavigate } from "react-router-dom";
 import firebaseDb from "config/firebase-config";
 import { deleteDoc, doc, setDoc } from "firebase/firestore";
 import { collection, query, where, onSnapshot } from "firebase/firestore";
-import { MySkillForm } from "./MySkillForm";
+import { WelcomeForm } from "./WelcomeForm";
 
-export const MySkillTable = ({ reload, setReload }) => {
-  const [mySkillData, setMySkillData] = useState([]);
+export const WelcomeTable = ({ reload, setReload }) => {
+  const [welcomeData, setWelcomeData] = useState([]);
 
   useEffect(() => {
-    const q = query(collection(firebaseDb, "myskill"));
+    const q = query(collection(firebaseDb, "welcome"));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const myskill = [];
+      const welcome = [];
       querySnapshot.forEach((doc) => {
-        myskill.push(doc.data());
+        welcome.push(doc.data());
       });
-      setMySkillData(myskill);
+      setWelcomeData(welcome);
     });
   }, []);
 
-  console.log("navbar list : ", mySkillData);
+  console.log("navbar list : ",welcomeData)
 
   function Author({ name }) {
     return (
@@ -59,10 +60,10 @@ export const MySkillTable = ({ reload, setReload }) => {
             textTransform="uppercase"
             textAlign="center"
           >
-            Edit Navbar List
+            Edit Welcome Info
           </SoftTypography>
 
-          <MySkillForm
+          <WelcomeForm
             editMode={true}
             setOpen={setOpenEdit}
             data={data}
@@ -79,14 +80,14 @@ export const MySkillTable = ({ reload, setReload }) => {
     const [loading, setLoading] = useState(false);
     const { enqueueSnackbar } = useSnackbar();
 
-    const deleteSkill = async () => {
-      const deleteRef = doc(firebaseDb, "myskill", data?.id);
+    const deleteWelcomeInfo = async () => {
+      const deleteRef = doc(firebaseDb, "welcome", data?.id);
       await deleteDoc(deleteRef)
         .then((res) => {
-          enqueueSnackbar("Skill has been deleted successfulyy", { variant: "success" });
+          enqueueSnackbar("Welcome Info has been deleted successfulyy", { variant: "success" });
         })
         .catch((err) => {
-          enqueueSnackbar("Error Occured !!! Try Again", { variant: "error" });
+            enqueueSnackbar("Error Occured !!! Try Again", { variant: "error" });
           console.log(err);
         });
     };
@@ -94,7 +95,7 @@ export const MySkillTable = ({ reload, setReload }) => {
     return (
       <>
         <SoftBox display="flex" alignItems="center" mt={{ xs: 2, sm: 0 }} ml={{ xs: -1.5, sm: 0 }}>
-          <SoftBox mr={1}>
+          <SoftBox mr={1}> 
             <SoftButton variant="text" color="error" onClick={() => setOpenDelete(true)}>
               <Icon>delete</Icon>&nbsp;Delete
             </SoftButton>
@@ -108,16 +109,16 @@ export const MySkillTable = ({ reload, setReload }) => {
             textAlign="center"
             mb={2}
           >
-            Delete Skill
+            Delete Welcome Info
           </SoftTypography>
           <SoftTypography color="dark" fontWeight="normal" textTransform="uppercase" mb={2}>
-            Do you want to remove this Skill?
+            Do you want to remove this Welcome Info?
           </SoftTypography>
           <LoadingButton
             title="confirm"
             loading={loading}
             color="success"
-            action={deleteSkill}
+            action={deleteWelcomeInfo}
             size="small"
           />
           &nbsp;
@@ -131,33 +132,30 @@ export const MySkillTable = ({ reload, setReload }) => {
 
   const columns = [
     { name: "S.No", align: "center" },
-    { name: "Skill Title", align: "left" },
-    { name: "Skill Description", align: "left" },
+    { name: "Welcome Info", align: "left" },
     { name: "Action", align: "left" },
   ];
 
   const temp = [0, 1, 2, 3].map((item) => ({
     "S.No": <Skeleton animation="wave" width={50} />,
-    "Skill Title": <Skeleton animation="wave" width={50} />,
-    "Skill Description": <Skeleton animation="wave" width={50} />,
+    "Welcome Info": <Skeleton animation="wave" width={50} />,
     Action: <Skeleton animation="wave" width={50} />,
   }));
 
   const [rows, setRows] = useState(temp);
 
   useEffect(() => {
-    if (mySkillData !== []) {
+    if (welcomeData !== []) {
       let temp = [];
-      for (let i = 0; i < mySkillData.length; i++) {
-        let classData = mySkillData[i];
+      for (let i = 0; i < welcomeData.length; i++) {
+        let classData = welcomeData[i];
         temp.push({
           "S.No": (
             <SoftTypography variant="caption" color="secondary" fontWeight="medium">
               {i + 1}
             </SoftTypography>
           ),
-          "Skill Title": <Author name={parse(classData?.skill)} />,
-          "Skill Description": <Author name={parse(classData?.description.substring(0, 120))} />,
+          "Welcome Info": <Author name={parse(classData?.info)} />,
           Action: (
             <>
               <>
@@ -173,7 +171,11 @@ export const MySkillTable = ({ reload, setReload }) => {
                   </SoftBox>
 
                   <SoftBox>
-                    <DeleteAction data={classData} reload={reload} setReload={setReload} />
+                    <DeleteAction
+                      data={classData}
+                      reload={reload}
+                      setReload={setReload}
+                    />
                   </SoftBox>
                 </SoftBox>
               </>
@@ -183,10 +185,10 @@ export const MySkillTable = ({ reload, setReload }) => {
       }
       setRows(temp);
     }
-  }, [mySkillData]);
+  }, [welcomeData]);
 
   return {
     columns,
-    rows,
+    rows
   };
 };

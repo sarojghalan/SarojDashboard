@@ -13,58 +13,50 @@ import { fireStorage } from "config/firebase-config";
 import { setDoc, doc, collection, updateDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
-export const MyProjectForm = ({ setOpen, reload, setReload, editMode, data }) => {
+export const LanguageForm = ({ setOpen, reload, setReload, editMode, data }) => {
   const initialState = {
     title:"",
     image: "",
-    description: "",
-    link:"",
-    myPart:""
   };
 
-  const [projectData, setProjectData] = useState(initialState);
+  const [LanguageData, setLanguageData] = useState(initialState);
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => { 
     if (editMode && data) {
-      setProjectData({
+      setLanguageData({
         image: data.image,
         description: data.description,
-        title: data.title,
-        link: data.link,
-        myPart:data.myPart
       });
     }
   }, [editMode, data]);
 
-  console.log("data are : ",data)
-
-  const handleProjectData = (e) => {
+  const handleLanguageData = (e) => {
     if (e.target.name === "image") {
-      setProjectData({
-        ...projectData,
+      setLanguageData({
+        ...LanguageData,
         image: e.target.files[0],
       });
     } else {
-      setProjectData({
-        ...projectData,
+      setLanguageData({
+        ...LanguageData,
         [e.target.name]: e.target.value,
       });
     }
   };
 
-  const docRef = doc(collection(firebaseDb, "myproject"));
+  const docRef = doc(collection(firebaseDb, "language"));
 
-  const createimage = () => {
-    if (projectData.image === "" || projectData.title === "" || projectData.description === "") {
+  const createLanguage = () => {
+    if (LanguageData.image === "" || LanguageData.title === "" ) {
       enqueueSnackbar("Empty field detected !", {
         variant: "error",
       });
     } else if (editMode) {
-      const docRefUpdate = doc(firebaseDb, "myproject", data?.id);
-      const file = projectData.image;
-      const storageRef = ref(fireStorage, `myproject/${file.name}`);
+      const docRefUpdate = doc(firebaseDb, "language", data?.id);
+      const file = LanguageData.image;
+      const storageRef = ref(fireStorage, `language/${file.name}`);
       const uploadTask = uploadBytesResumable(storageRef, file);
 
       uploadTask.on(
@@ -78,12 +70,12 @@ export const MyProjectForm = ({ setOpen, reload, setReload, editMode, data }) =>
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then(async (downloadUrl) => {
             await updateDoc(docRefUpdate, {
-              ...projectData,
+              ...LanguageData,
               image: downloadUrl,
               createdAt: new Date(),
             })
               .then((res) => {
-                enqueueSnackbar("Project has been updated successfully", {
+                enqueueSnackbar("Language has been updated successfully", {
                   variant: "success",
                 });
                 setOpen(false);
@@ -96,29 +88,27 @@ export const MyProjectForm = ({ setOpen, reload, setReload, editMode, data }) =>
         }
       );
     } else {
-      const file = projectData.image;
-      const storageRef = ref(fireStorage, `myproject/${file.name}`);
+      const file = LanguageData.image;
+      const storageRef = ref(fireStorage, `language/${file.name}`);
       const uploadTask = uploadBytesResumable(storageRef, file);
       uploadTask.on(
         "state_changed",
         (snapshot) => {
           const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-          console.log("k ma galti bhayo");
         },
         (error) => {
           enqueueSnackbar(error, { variant: "error" });
         },
         () => {
-          console.log("yaa samma aaepugeko");
           getDownloadURL(uploadTask.snapshot.ref).then(async (downloadUrl) => {
             await setDoc(docRef, {
-              ...projectData,
+              ...LanguageData,
               image: downloadUrl,
               id: docRef.id,
-              createdAt: Date.now(),
+              createdAt: Date.now().toLocaleString(),
             })
               .then((res) => {
-                enqueueSnackbar("Project has been created successfully", {
+                enqueueSnackbar("Language has been created successfully", {
                   variant: "success",
                 });
                 setOpen(false);
@@ -138,31 +128,15 @@ export const MyProjectForm = ({ setOpen, reload, setReload, editMode, data }) =>
           <SoftBox mb={2}>
         <SoftBox mb={1} ml={0.5}>
           <SoftTypography component="label" variant="caption" fontWeight="bold">
-            Project Title
+            Language Title
             <Required />
           </SoftTypography>
         </SoftBox>
         <SoftInput
           type="text"
           name="title"
-          value={projectData.title}
-          placeholder="Project Title Here.."
-          onChange={handleProjectData}
-        />
-      </SoftBox>
-      <SoftBox mb={2}>
-        <SoftBox mb={1} ml={0.5}>
-          <SoftTypography component="label" variant="caption" fontWeight="bold">
-            Project Link
-            <Required />
-          </SoftTypography>
-        </SoftBox>
-        <SoftInput
-          type="text"
-          name="link"
-          value={projectData.link}
-          placeholder="Project Link Here.."
-          onChange={handleProjectData}
+          placeholder="Language Title Here.."
+          onChange={handleLanguageData}
         />
       </SoftBox>
       <SoftBox mb={2}>
@@ -175,46 +149,15 @@ export const MyProjectForm = ({ setOpen, reload, setReload, editMode, data }) =>
         <SoftInput
           type="file"
           name="image"
-          value={projectData.imaage}
           placeholder="Input File Here.."
-          onChange={handleProjectData}
-        />
-      </SoftBox>
-      <SoftBox mb={2}>
-        <SoftBox mb={1} ml={0.5}>
-          <SoftTypography component="label" variant="caption" fontWeight="bold">
-            Project Description
-            <Required />
-          </SoftTypography>
-        </SoftBox>
-        <SoftInput
-          type="text"
-          name="description"
-          value={projectData.description}
-          placeholder="Project Description Here ..."
-          onChange={handleProjectData}
-        />
-      </SoftBox>
-      <SoftBox mb={2}>
-        <SoftBox mb={1} ml={0.5}>
-          <SoftTypography component="label" variant="caption" fontWeight="bold">
-            What You have done 
-            <Required />
-          </SoftTypography>
-        </SoftBox>
-        <SoftInput
-          type="text"
-          name="myPart"
-          value={projectData.myPart}
-          placeholder="Project Description Here ..."
-          onChange={handleProjectData}
+          onChange={handleLanguageData}
         />
       </SoftBox>
       <SoftBox mt={4} mb={1}>
         <LoadingButton
-          title={editMode ? "Update Navbar Title" : "Create Navbar Title"}
+          title={editMode ? "Update Language" : "Create Language"}
           loading={loading}
-          action={createimage}
+          action={createLanguage}
         />
         &nbsp;
         <SoftButton variant="gradient" color="error" onClick={() => setOpen(false)}>

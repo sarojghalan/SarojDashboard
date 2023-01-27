@@ -17,6 +17,9 @@ import { MasterBanner } from "Pages/MasterBanner/MasterBanner";
 import { MyService } from "Pages/MyServices/MyService";
 import { AboutMe } from "Pages/AboutMe/AboutMe";
 import { MyProject } from "Pages/MyProjects/MyProject";
+import { WelcomeInfo } from "Pages/Welcome/WelcomeInfo";
+import { MyLanguage } from "Pages/Language/Language";
+import { WebService } from "Pages/WebServices/WebService";
 
 const routes = [
   {
@@ -26,6 +29,26 @@ const routes = [
     route: "/dashboard",
     icon: <Shop size="12px" />,
     component: <Dashboard />,
+    noCollapse: true,
+    authentication: true,
+  },
+  {
+    type: "collapse",
+    name: "Welcome Info",
+    key: "welcome-info",
+    route: "/welcome_info",
+    icon: <Shop size="12px" />,
+    component: <WelcomeInfo />,
+    noCollapse: true,
+    authentication: true,
+  },
+  {
+    type: "collapse",
+    name: "Langauge",
+    key: "language",
+    route: "/language",
+    icon: <Shop size="12px" />,
+    component: <MyLanguage />,
     noCollapse: true,
     authentication: true,
   },
@@ -86,6 +109,16 @@ const routes = [
     route: "/my-project",
     icon: <Shop size="12px" />,
     component: <MyProject />,
+    noCollapse: true,
+    authentication: true,
+  },
+  {
+    type: "collapse",
+    name: "Web Service",
+    key: "web-service",
+    route: "/web-service",
+    icon: <Shop size="12px" />,
+    component: <WebService />,
     noCollapse: true,
     authentication: true,
   },

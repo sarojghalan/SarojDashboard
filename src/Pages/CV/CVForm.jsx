@@ -13,42 +13,32 @@ import { fireStorage } from "config/firebase-config";
 import { setDoc, doc, collection, updateDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
-export const MyProjectForm = ({ setOpen, reload, setReload, editMode, data }) => {
+export const CVForm = ({ setOpen, reload, setReload, editMode, data }) => {
   const initialState = {
-    title:"",
     image: "",
-    description: "",
-    link:"",
-    myPart:""
   };
 
-  const [projectData, setProjectData] = useState(initialState);
+  const [cV, setCV] = useState(initialState);
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => { 
+  useEffect(() => {
     if (editMode && data) {
-      setProjectData({
+      setCV({
         image: data.image,
-        description: data.description,
-        title: data.title,
-        link: data.link,
-        myPart:data.myPart
       });
     }
   }, [editMode, data]);
 
-  console.log("data are : ",data)
-
-  const handleProjectData = (e) => {
+  const handlecV = (e) => {
     if (e.target.name === "image") {
-      setProjectData({
-        ...projectData,
+      setCV({
+        ...cV,
         image: e.target.files[0],
       });
     } else {
-      setProjectData({
-        ...projectData,
+      setCV({
+        ...cV,
         [e.target.name]: e.target.value,
       });
     }
@@ -57,13 +47,13 @@ export const MyProjectForm = ({ setOpen, reload, setReload, editMode, data }) =>
   const docRef = doc(collection(firebaseDb, "myproject"));
 
   const createimage = () => {
-    if (projectData.image === "" || projectData.title === "" || projectData.description === "") {
+    if (cV.image === "" || cV.title === "" || cV.description === "") {
       enqueueSnackbar("Empty field detected !", {
         variant: "error",
       });
     } else if (editMode) {
       const docRefUpdate = doc(firebaseDb, "myproject", data?.id);
-      const file = projectData.image;
+      const file = cV.image;
       const storageRef = ref(fireStorage, `myproject/${file.name}`);
       const uploadTask = uploadBytesResumable(storageRef, file);
 
@@ -78,7 +68,7 @@ export const MyProjectForm = ({ setOpen, reload, setReload, editMode, data }) =>
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then(async (downloadUrl) => {
             await updateDoc(docRefUpdate, {
-              ...projectData,
+              ...cV,
               image: downloadUrl,
               createdAt: new Date(),
             })
@@ -96,7 +86,7 @@ export const MyProjectForm = ({ setOpen, reload, setReload, editMode, data }) =>
         }
       );
     } else {
-      const file = projectData.image;
+      const file = cV.image;
       const storageRef = ref(fireStorage, `myproject/${file.name}`);
       const uploadTask = uploadBytesResumable(storageRef, file);
       uploadTask.on(
@@ -112,7 +102,7 @@ export const MyProjectForm = ({ setOpen, reload, setReload, editMode, data }) =>
           console.log("yaa samma aaepugeko");
           getDownloadURL(uploadTask.snapshot.ref).then(async (downloadUrl) => {
             await setDoc(docRef, {
-              ...projectData,
+              ...cV,
               image: downloadUrl,
               id: docRef.id,
               createdAt: Date.now(),
@@ -135,7 +125,7 @@ export const MyProjectForm = ({ setOpen, reload, setReload, editMode, data }) =>
 
   return (
     <SoftBox component="form" role="form">
-          <SoftBox mb={2}>
+      <SoftBox mb={2}>
         <SoftBox mb={1} ml={0.5}>
           <SoftTypography component="label" variant="caption" fontWeight="bold">
             Project Title
@@ -145,9 +135,8 @@ export const MyProjectForm = ({ setOpen, reload, setReload, editMode, data }) =>
         <SoftInput
           type="text"
           name="title"
-          value={projectData.title}
           placeholder="Project Title Here.."
-          onChange={handleProjectData}
+          onChange={handlecV}
         />
       </SoftBox>
       <SoftBox mb={2}>
@@ -160,9 +149,8 @@ export const MyProjectForm = ({ setOpen, reload, setReload, editMode, data }) =>
         <SoftInput
           type="text"
           name="link"
-          value={projectData.link}
           placeholder="Project Link Here.."
-          onChange={handleProjectData}
+          onChange={handlecV}
         />
       </SoftBox>
       <SoftBox mb={2}>
@@ -175,9 +163,8 @@ export const MyProjectForm = ({ setOpen, reload, setReload, editMode, data }) =>
         <SoftInput
           type="file"
           name="image"
-          value={projectData.imaage}
           placeholder="Input File Here.."
-          onChange={handleProjectData}
+          onChange={handlecV}
         />
       </SoftBox>
       <SoftBox mb={2}>
@@ -190,24 +177,8 @@ export const MyProjectForm = ({ setOpen, reload, setReload, editMode, data }) =>
         <SoftInput
           type="text"
           name="description"
-          value={projectData.description}
           placeholder="Project Description Here ..."
-          onChange={handleProjectData}
-        />
-      </SoftBox>
-      <SoftBox mb={2}>
-        <SoftBox mb={1} ml={0.5}>
-          <SoftTypography component="label" variant="caption" fontWeight="bold">
-            What You have done 
-            <Required />
-          </SoftTypography>
-        </SoftBox>
-        <SoftInput
-          type="text"
-          name="myPart"
-          value={projectData.myPart}
-          placeholder="Project Description Here ..."
-          onChange={handleProjectData}
+          onChange={handlecV}
         />
       </SoftBox>
       <SoftBox mt={4} mb={1}>

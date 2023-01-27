@@ -13,60 +13,48 @@ import { fireStorage } from "config/firebase-config";
 import { setDoc, doc, collection, updateDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
-export const MyProjectForm = ({ setOpen, reload, setReload, editMode, data }) => {
+export const WebServiceForm = ({ setOpen, reload, setReload, editMode, data }) => {
   const initialState = {
-    title:"",
-    image: "",
+    title: "",
     description: "",
-    link:"",
-    myPart:""
+    image: "",
   };
 
-  const [projectData, setProjectData] = useState(initialState);
+  const [webService, setWebService] = useState(initialState);
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => { 
+  useEffect(() => {
     if (editMode && data) {
-      setProjectData({
-        image: data.image,
-        description: data.description,
+      setWebService({
         title: data.title,
-        link: data.link,
-        myPart:data.myPart
+        description: data.description,
+        image: data.image,
       });
     }
   }, [editMode, data]);
 
-  console.log("data are : ",data)
-
-  const handleProjectData = (e) => {
+  const handleWebService = (e) => {
     if (e.target.name === "image") {
-      setProjectData({
-        ...projectData,
+      setWebService({
+        ...webService,
         image: e.target.files[0],
       });
     } else {
-      setProjectData({
-        ...projectData,
-        [e.target.name]: e.target.value,
-      });
+      setWebService({ ...webService, [e.target.name]: e.target.value });
     }
   };
 
-  const docRef = doc(collection(firebaseDb, "myproject"));
+  const docRef = doc(collection(firebaseDb, "webservice"));
 
-  const createimage = () => {
-    if (projectData.image === "" || projectData.title === "" || projectData.description === "") {
-      enqueueSnackbar("Empty field detected !", {
-        variant: "error",
-      });
+  const createWebService = () => {
+    if (webService.title === "" || webService.description === "") {
+      enqueueSnackbar("Empty Filed Detected ! Please Fill Up", { variant: "error" });
     } else if (editMode) {
-      const docRefUpdate = doc(firebaseDb, "myproject", data?.id);
-      const file = projectData.image;
-      const storageRef = ref(fireStorage, `myproject/${file.name}`);
+      const docRefUpdate = doc(firebaseDb, "webservice", data?.id);
+      const file = webService.image;
+      const storageRef = ref(fireStorage, `webservice/${file.name}`);
       const uploadTask = uploadBytesResumable(storageRef, file);
-
       uploadTask.on(
         "state_changed",
         (snapshot) => {
@@ -78,17 +66,17 @@ export const MyProjectForm = ({ setOpen, reload, setReload, editMode, data }) =>
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then(async (downloadUrl) => {
             await updateDoc(docRefUpdate, {
-              ...projectData,
+              ...webService,
               image: downloadUrl,
-              createdAt: new Date(),
             })
               .then((res) => {
-                enqueueSnackbar("Project has been updated successfully", {
+                enqueueSnackbar("Web Service has been updated successfully", {
                   variant: "success",
                 });
                 setOpen(false);
               })
               .catch((err) => {
+                enqueueSnackbar("Error occured !! Please try again", { variant: "error" });
                 console.log(err);
                 setOpen(false);
               });
@@ -96,34 +84,33 @@ export const MyProjectForm = ({ setOpen, reload, setReload, editMode, data }) =>
         }
       );
     } else {
-      const file = projectData.image;
-      const storageRef = ref(fireStorage, `myproject/${file.name}`);
+      const file = webService.image;
+      const storageRef = ref(fireStorage, `webservice/${file.name}`);
       const uploadTask = uploadBytesResumable(storageRef, file);
       uploadTask.on(
         "state_changed",
         (snapshot) => {
           const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-          console.log("k ma galti bhayo");
         },
         (error) => {
           enqueueSnackbar(error, { variant: "error" });
         },
         () => {
-          console.log("yaa samma aaepugeko");
           getDownloadURL(uploadTask.snapshot.ref).then(async (downloadUrl) => {
             await setDoc(docRef, {
-              ...projectData,
+              ...webService,
               image: downloadUrl,
               id: docRef.id,
-              createdAt: Date.now(),
+              createdAt: Date.now().toLocaleString(),
             })
               .then((res) => {
-                enqueueSnackbar("Project has been created successfully", {
+                enqueueSnackbar("Web Service has been created successfully", {
                   variant: "success",
                 });
                 setOpen(false);
               })
               .catch((err) => {
+                enqueueSnackbar("Error occured !! Please try again", { variant: "error" });
                 console.log(err);
                 setOpen(false);
               });
@@ -135,86 +122,57 @@ export const MyProjectForm = ({ setOpen, reload, setReload, editMode, data }) =>
 
   return (
     <SoftBox component="form" role="form">
-          <SoftBox mb={2}>
+      <SoftBox mb={2}>
         <SoftBox mb={1} ml={0.5}>
           <SoftTypography component="label" variant="caption" fontWeight="bold">
-            Project Title
+            Web Service Title
             <Required />
           </SoftTypography>
         </SoftBox>
         <SoftInput
           type="text"
+          placeholder="Enter here..."
+          required
           name="title"
-          value={projectData.title}
-          placeholder="Project Title Here.."
-          onChange={handleProjectData}
+          value={webService.title}
+          onChange={handleWebService}
         />
       </SoftBox>
       <SoftBox mb={2}>
         <SoftBox mb={1} ml={0.5}>
           <SoftTypography component="label" variant="caption" fontWeight="bold">
-            Project Link
+            Web Service Description
             <Required />
           </SoftTypography>
         </SoftBox>
         <SoftInput
           type="text"
-          name="link"
-          value={projectData.link}
-          placeholder="Project Link Here.."
-          onChange={handleProjectData}
+          placeholder="Enter here..."
+          required
+          name="description"
+          value={webService.description}
+          onChange={handleWebService}
         />
       </SoftBox>
       <SoftBox mb={2}>
         <SoftBox mb={1} ml={0.5}>
           <SoftTypography component="label" variant="caption" fontWeight="bold">
-            Project Image
+            Web Service Image
             <Required />
           </SoftTypography>
         </SoftBox>
         <SoftInput
           type="file"
           name="image"
-          value={projectData.imaage}
           placeholder="Input File Here.."
-          onChange={handleProjectData}
-        />
-      </SoftBox>
-      <SoftBox mb={2}>
-        <SoftBox mb={1} ml={0.5}>
-          <SoftTypography component="label" variant="caption" fontWeight="bold">
-            Project Description
-            <Required />
-          </SoftTypography>
-        </SoftBox>
-        <SoftInput
-          type="text"
-          name="description"
-          value={projectData.description}
-          placeholder="Project Description Here ..."
-          onChange={handleProjectData}
-        />
-      </SoftBox>
-      <SoftBox mb={2}>
-        <SoftBox mb={1} ml={0.5}>
-          <SoftTypography component="label" variant="caption" fontWeight="bold">
-            What You have done 
-            <Required />
-          </SoftTypography>
-        </SoftBox>
-        <SoftInput
-          type="text"
-          name="myPart"
-          value={projectData.myPart}
-          placeholder="Project Description Here ..."
-          onChange={handleProjectData}
+          onChange={handleWebService}
         />
       </SoftBox>
       <SoftBox mt={4} mb={1}>
         <LoadingButton
-          title={editMode ? "Update Navbar Title" : "Create Navbar Title"}
+          title={editMode ? "Update Web Service" : "Create Web Service"}
           loading={loading}
-          action={createimage}
+          action={createWebService}
         />
         &nbsp;
         <SoftButton variant="gradient" color="error" onClick={() => setOpen(false)}>

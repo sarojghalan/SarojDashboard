@@ -8,27 +8,29 @@ import MyModal from "components/Modal/Modal";
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import SoftButton from "components/SoftButton";
- 
+
 // Soft UI Dashboard React examples
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Table from "examples/Tables/Table";
-import { MyProjectForm } from "./MyProjectForm";
-import { MyProjectTable } from "./MyProjectTable";
+import { WebServiceTable } from "./WebServiceTable";
+import { WebServiceForm } from "./WebServiceForm";
 
-export const MyProject = () => {
-    const [reload , setReload] = useState(false);
-    const {columns , rows} = MyProjectTable({reload , setReload})
-    const [openForm , setOpenForm] = useState(false)
 
-    return(
-        <DashboardLayout>
+
+export const WebService = () => {
+  const [reload, setReload] = useState(false);
+  const { columns, rows } = WebServiceTable({ reload, setReload });
+  const [openForm, setOpenForm] = useState(false);
+
+  return (
+    <DashboardLayout>
       <DashboardNavbar />
       <SoftBox py={3}>
         <SoftBox mb={3}>
           <Card>
             <SoftBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
-              <SoftTypography variant="h6">My Projects</SoftTypography>
+              <SoftTypography variant="h6">Welcome Info</SoftTypography>
               <SoftButton color="success" onClick={() => setOpenForm(true)}>
                 New
                 <Icon>add</Icon>
@@ -48,7 +50,7 @@ export const MyProject = () => {
             </SoftBox>
           </Card>
         </SoftBox>
-      </SoftBox>
+      </SoftBox> 
 
       {/* New Class Modal */}
       <MyModal open={openForm} setOpen={setOpenForm} height="100vh">
@@ -58,10 +60,10 @@ export const MyProject = () => {
           textTransform="uppercase"
           textAlign="center"
         >
-          Create Your Project
+          Create Welcome Info
         </SoftTypography>
-        <MyProjectForm setOpen={setOpenForm} reload={reload} setReload={setReload} />
+        <WebServiceForm setOpen={setOpenForm} reload={reload} setReload={setReload} />
       </MyModal>
     </DashboardLayout>
-    )
-}
+  );
+};

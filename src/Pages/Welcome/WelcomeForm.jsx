@@ -13,65 +13,54 @@ import { fireStorage } from "config/firebase-config";
 import { setDoc, doc, collection, updateDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
-export const MySkillForm = ({ setOpen, reload, setReload, editMode, data }) => {
+export const WelcomeForm = ({ setOpen, reload, setReload, editMode, data }) => {
   const initialState = {
-    skill: "",
-    description: "",
+    info: "",
   };
-  const [mySkill, setMySkill] = useState(initialState);
+  const [welcomeInfo, setWelcomeInfo] = useState(initialState);
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (editMode && data) {
-      setMySkill({
-        skill: data.skill,
-        description: data.description,
-      });
+      setWelcomeInfo(data);
     }
   }, [editMode, data]);
 
-  const handleSkill = (e) => {
-    if (e.target.name === "image") {
-      setMySkill({ ...mySkill, image: e.target.files[0] });
-    }
-    setMySkill({ ...mySkill, [e.target.name]: e.target.value });
+  const handlewelcomeInfo = (e) => {
+    setWelcomeInfo({ ...welcomeInfo, [e.target.name]: e.target.value });
   };
 
-  const docRef = doc(collection(firebaseDb, "myskill"));
+  const docRef = doc(collection(firebaseDb, "welcome"));
 
-  const createSkill = () => {
-    if (mySkill.title === "") {
+  const createwelcomeInfo = () => {
+    if (welcomeInfo.info === "") {
       enqueueSnackbar("Empty Filed Detected ! Please Fill Up", { variant: "error" });
-    } else if (editMode) {
-      const docRefUpdate = doc(firebaseDb, "myskill", data?.id);
-      updateDoc(docRefUpdate, { ...mySkill, createdAt: Date.now().toLocaleString() })
+    } else if(editMode){
+        const docRefUpdate = doc(firebaseDb, "welcome",data?.id);
+        updateDoc(docRefUpdate, { ...welcomeInfo}).then((res) => {
+            enqueueSnackbar("Welcome Info has been updated successfully", {
+              variant: "success",
+            });
+            setOpen(false);
+          })
+          .catch((err) => {
+            enqueueSnackbar("Error occured !! Please try again", { variant: "error" });
+            console.log(err)
+            setOpen(false);
+          });
+    }
+    else {
+      setDoc(docRef, { ...welcomeInfo, id: docRef.id })
         .then((res) => {
-          enqueueSnackbar("Your skill has been updated successfully", {
+          enqueueSnackbar("Welcome info has been created successfully", {
             variant: "success",
           });
           setOpen(false);
         })
         .catch((err) => {
           enqueueSnackbar("Error occured !! Please try again", { variant: "error" });
-          console.log(err);
-          setOpen(false);
-        });
-    } else {
-      setDoc(docRef, {
-        ...mySkill,
-        id: docRef.id,
-        createdAt:  Date.now().toLocaleString(),
-      })
-        .then((res) => {
-          enqueueSnackbar("Your Skill has been created successfully", {
-            variant: "success",
-          });
-          setOpen(false);
-        })
-        .catch((err) => {
-          enqueueSnackbar("Error occured !! Please try again", { variant: "error" });
-          console.log(err);
+          console.log(err)
           setOpen(false);
         });
     }
@@ -82,7 +71,7 @@ export const MySkillForm = ({ setOpen, reload, setReload, editMode, data }) => {
       <SoftBox mb={2}>
         <SoftBox mb={1} ml={0.5}>
           <SoftTypography component="label" variant="caption" fontWeight="bold">
-            Skill Title
+            Welcome Info
             <Required />
           </SoftTypography>
         </SoftBox>
@@ -90,32 +79,16 @@ export const MySkillForm = ({ setOpen, reload, setReload, editMode, data }) => {
           type="text"
           placeholder="Enter here..."
           required
-          name="skill"
-          value={mySkill.skill}
-          onChange={handleSkill}
-        />
-      </SoftBox>
-      <SoftBox mb={2}>
-        <SoftBox mb={1} ml={0.5}>
-          <SoftTypography component="label" variant="caption" fontWeight="bold">
-            Description
-            <Required />
-          </SoftTypography>
-        </SoftBox>
-        <SoftInput
-          placeholder="Type here..."
-          multiline
-          rows={5}
-          name="description"
-          value={mySkill.description}
-          onChange={handleSkill}
+          name="info"
+          value={welcomeInfo.info}
+          onChange={handlewelcomeInfo}
         />
       </SoftBox>
       <SoftBox mt={4} mb={1}>
         <LoadingButton
           title={editMode ? "Update Navbar Title" : "Create Navbar Title"}
           loading={loading}
-          action={createSkill}
+          action={createwelcomeInfo}
         />
         &nbsp;
         <SoftButton variant="gradient" color="error" onClick={() => setOpen(false)}>
